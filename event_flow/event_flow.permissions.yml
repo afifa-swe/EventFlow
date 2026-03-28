@@ -1,0 +1,8 @@
+administer events:
+  title: 'Administer events'
+  description: 'Create, edit, delete events and view participants.'
+  restrict access: true
+
+register for events:
+  title: 'Register for events'
+  description: 'Register and unregister for events.'

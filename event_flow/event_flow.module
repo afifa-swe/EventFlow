@@ -1,0 +1,130 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for Event Flow module.
+ */
+
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_theme().
+ */
+function event_flow_theme() {
+  return [
+    'event_weather' => [
+      'variables' => [
+        'temperature' => NULL,
+        'windspeed' => NULL,
+        'description' => NULL,
+        'weathercode' => NULL,
+      ],
+    ],
+    'event_registration_button' => [
+      'variables' => [
+        'event' => NULL,
+        'is_registered' => FALSE,
+        'is_open' => FALSE,
+        'register_url' => NULL,
+        'is_anonymous' => FALSE,
+      ],
+    ],
+    'event_list' => [
+      'variables' => [
+        'events' => [],
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_entity_extra_field_info().
+ */
+function event_flow_entity_extra_field_info() {
+  $extra = [];
+
+  $extra['event']['event']['display']['registration_button'] = [
+    'label' => t('Registration button'),
+    'description' => t('Button to register/unregister for the event.'),
+    'weight' => 100,
+    'visible' => TRUE,
+  ];
+
+  $extra['event']['event']['display']['weather_widget'] = [
+    'label' => t('Weather widget'),
+    'description' => t('Current weather at the event location.'),
+    'weight' => 101,
+    'visible' => TRUE,
+  ];
+
+  return $extra;
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_view() for event entities.
+ */
+function event_flow_event_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
+  /** @var \Drupal\event_flow\Entity\Event $entity */
+
+  $build['#attached']['library'][] = 'event_flow/event_flow';
+
+  // Registration button.
+  if ($display->getComponent('registration_button')) {
+    $current_user = \Drupal::currentUser();
+    $is_anonymous = $current_user->isAnonymous();
+    $is_registered = FALSE;
+    $register_url = NULL;
+
+    if (!$is_anonymous) {
+      $existing = \Drupal::entityTypeManager()
+        ->getStorage('event_registration')
+        ->loadByProperties([
+          'event_id' => $entity->id(),
+          'uid' => $current_user->id(),
+        ]);
+      $is_registered = !empty($existing);
+
+      $register_url = Url::fromRoute('event_flow.register', [
+        'event' => $entity->id(),
+      ])->toString();
+    }
+
+    $build['registration_button'] = [
+      '#theme' => 'event_registration_button',
+      '#event' => $entity,
+      '#is_registered' => $is_registered,
+      '#is_open' => $entity->isRegistrationOpen(),
+      '#register_url' => $register_url,
+      '#is_anonymous' => $is_anonymous,
+      '#cache' => [
+        'contexts' => ['user'],
+        'tags' => ['event:' . $entity->id()],
+      ],
+    ];
+  }
+
+  if ($display->getComponent('weather_widget')) {
+    $lat = (float) $entity->get('latitude')->value;
+    $lon = (float) $entity->get('longitude')->value;
+
+    /** @var \Drupal\event_flow\Service\WeatherService $weather_service */
+    $weather_service = \Drupal::service('event_flow.weather_service');
+    $weather = $weather_service->getWeather($lat, $lon);
+
+    if ($weather) {
+      $build['weather_widget'] = [
+        '#theme' => 'event_weather',
+        '#temperature' => $weather['temperature'],
+        '#windspeed' => $weather['windspeed'],
+        '#description' => $weather['description'],
+        '#weathercode' => $weather['weathercode'],
+        '#cache' => [
+          'max-age' => 600,
+          'tags' => ['event:' . $entity->id()],
+        ],
+      ];
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{#
+/**
+ * @file
+ * Template for the public events listing page.
+ */
+#}
+{% if events is not empty %}
+  <div class="event-list-card">
+    {% for event in events %}
+      <div class="event-card">
+        <h3 class="event-card__title">{{ event.title }}</h3>
+        <div class="event-card__meta">
+          <div class="event-card__meta-item">
+            <span class="event-card__meta-icon">&#128197;</span>
+            {{ event.start_date }} &mdash; {{ event.end_date }}
+          </div>
+        </div>
+        <span class="event-card__status event-card__status--{{ event.status }}">
+          {{ event.status_label }}
+        </span>
+        <div class="event-card__participants">
+          {{ 'Participants:'|t }} {{ event.count }} / {{ event.max }}
+          <div class="event-card__participants-bar">
+            <div class="event-card__participants-fill" style="width: {{ event.percent }}%"></div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <p>{{ 'No events available yet.'|t }}</p>
+{% endif %}

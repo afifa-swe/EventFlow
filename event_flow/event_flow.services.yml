@@ -1,0 +1,4 @@
+services:
+  event_flow.weather_service:
+    class: Drupal\event_flow\Service\WeatherService
+    arguments: ['@http_client', '@cache.default']

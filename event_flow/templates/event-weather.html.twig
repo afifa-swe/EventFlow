@@ -1,0 +1,20 @@
+{#
+/**
+ * @file
+ * Template for the weather widget on an event page.
+ */
+#}
+<div class="event-weather-widget">
+  <h3>{{ 'Current Weather'|t }}</h3>
+  <div class="event-weather-info">
+    <div class="weather-temperature">
+      <strong>{{ 'Temperature:'|t }}</strong> {{ temperature }}°C
+    </div>
+    <div class="weather-description">
+      <strong>{{ 'Conditions:'|t }}</strong> {{ description }}
+    </div>
+    <div class="weather-wind">
+      <strong>{{ 'Wind speed:'|t }}</strong> {{ windspeed }} {{ 'km/h'|t }}
+    </div>
+  </div>
+</div>

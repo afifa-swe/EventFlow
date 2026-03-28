@@ -1,0 +1,5 @@
+event_flow:
+  version: 1.x
+  css:
+    theme:
+      css/event-flow.css: {}

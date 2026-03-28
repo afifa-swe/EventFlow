@@ -1,0 +1,42 @@
+event_flow.events_list:
+  path: '/events'
+  defaults:
+    _controller: '\Drupal\event_flow\Controller\EventListController::list'
+    _title: 'Events'
+  requirements:
+    _access: 'TRUE'
+
+event_flow.register:
+  path: '/event/{event}/register'
+  defaults:
+    _controller: '\Drupal\event_flow\Controller\EventRegistrationController::register'
+  requirements:
+    _permission: 'register for events'
+    _csrf_token: 'TRUE'
+  options:
+    parameters:
+      event:
+        type: 'entity:event'
+
+event_flow.participants:
+  path: '/admin/content/events/{event}/participants'
+  defaults:
+    _controller: '\Drupal\event_flow\Controller\EventParticipantsController::list'
+    _title: 'Event Participants'
+  requirements:
+    _permission: 'administer events'
+  options:
+    parameters:
+      event:
+        type: 'entity:event'
+
+event_flow.weather:
+  path: '/event/{event}/weather'
+  defaults:
+    _controller: '\Drupal\event_flow\Controller\EventWeatherController::getWeather'
+  requirements:
+    _access: 'TRUE'
+  options:
+    parameters:
+      event:
+        type: 'entity:event'

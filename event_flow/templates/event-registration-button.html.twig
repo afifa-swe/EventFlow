@@ -1,0 +1,17 @@
+{#
+/**
+ * @file
+ * Template for the event registration button.
+ */
+#}
+<div class="event-registration">
+  {% if is_anonymous %}
+    <p>{{ 'Please <a href="@login">log in</a> to register for this event.'|t({'@login': path('user.login')}) }}</p>
+  {% elseif not is_open and not is_registered %}
+    <button class="button button--primary" disabled>{{ 'Registration closed'|t }}</button>
+  {% elseif is_registered %}
+    <a href="{{ register_url }}" class="button button--danger">{{ 'Unregister'|t }}</a>
+  {% else %}
+    <a href="{{ register_url }}" class="button button--primary">{{ 'Register for event'|t }}</a>
+  {% endif %}
+</div>

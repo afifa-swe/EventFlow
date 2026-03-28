@@ -1,0 +1,13 @@
+event_flow.admin:
+  title: 'Events'
+  route_name: entity.event.collection
+  parent: system.admin_content
+  description: 'Manage events.'
+  weight: 10
+
+event_flow.events_list:
+  title: 'Events'
+  route_name: event_flow.events_list
+  menu_name: main
+  description: 'View all events.'
+  weight: 5

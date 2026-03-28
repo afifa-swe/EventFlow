@@ -1,0 +1,12 @@
+name: Event Flow
+type: module
+description: 'Custom event management module with registration and weather integration.'
+core_version_requirement: ^10 || ^11
+package: Custom
+php: 8.1
+dependencies:
+  - drupal:user
+  - drupal:system
+  - drupal:datetime
+  - drupal:text
+  - drupal:options
